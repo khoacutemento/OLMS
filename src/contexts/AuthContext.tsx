@@ -6,7 +6,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (fullName: string, email: string, password: string, phoneNumber?: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -39,15 +39,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     const { data } = await authApi.login({ email, password });
     localStorage.setItem("access_token", data.accessToken);
-    localStorage.setItem("refresh_token", data.refreshToken);
-    setUser(data.user);
+    if (data.refreshToken) localStorage.setItem("refresh_token", data.refreshToken);
+    // fetch full profile after login
+    await refreshUser();
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    const { data } = await authApi.register({ name, email, password });
+  const register = async (fullName: string, email: string, password: string, phoneNumber?: string) => {
+    const { data } = await authApi.register({ fullName, email, password, phoneNumber });
     localStorage.setItem("access_token", data.accessToken);
-    localStorage.setItem("refresh_token", data.refreshToken);
-    setUser(data.user);
+    if (data.refreshToken) localStorage.setItem("refresh_token", data.refreshToken);
+    await refreshUser();
   };
 
   const logout = () => {

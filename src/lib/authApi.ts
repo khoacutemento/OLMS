@@ -6,9 +6,10 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
+  fullName: string;
   email: string;
   password: string;
-  name: string;
+  phoneNumber?: string;
 }
 
 export interface AuthResponse {
@@ -18,31 +19,40 @@ export interface AuthResponse {
 }
 
 export interface UserProfile {
-  id: string;
+  id: number;
+  fullName: string;
   email: string;
-  name: string;
   avatar?: string;
+  phone?: string;
+  address?: string;
+  role?: string;
+}
+
+export interface UpdateProfilePayload {
+  fullName: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface ChangePasswordPayload {
-  currentPassword: string;
+  oldPassword: string;
   newPassword: string;
 }
 
 export const authApi = {
   login: (payload: LoginPayload) =>
-    apiClient.post<AuthResponse>("/auth/login", payload),
+    apiClient.post<AuthResponse>("/api/Auth/login", payload),
 
   register: (payload: RegisterPayload) =>
-    apiClient.post<AuthResponse>("/auth/register", payload),
+    apiClient.post<AuthResponse>("/api/Auth/register", payload),
 
-  getProfile: () => apiClient.get<UserProfile>("/auth/profile"),
+  getProfile: () => apiClient.get<UserProfile>("/api/Auth/profile"),
 
-  updateProfile: (payload: Partial<UserProfile>) =>
-    apiClient.put<UserProfile>("/auth/profile", payload),
+  updateProfile: (payload: UpdateProfilePayload) =>
+    apiClient.put<UserProfile>("/api/Auth/profile", payload),
 
   changePassword: (payload: ChangePasswordPayload) =>
-    apiClient.put("/auth/change-password", payload),
+    apiClient.put("/api/Auth/change-password", payload),
 
   logout: () => {
     localStorage.removeItem("access_token");

@@ -8,8 +8,9 @@ import "@/styles/auth.scss";
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -30,8 +31,9 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await register(name, email, password);
+      await register(fullName, email, password, phoneNumber || undefined);
       navigate("/profile");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.message || "Registration failed. Please try again.");
     } finally {
@@ -51,12 +53,16 @@ const Register = () => {
 
         <form className="auth-card__form" onSubmit={handleSubmit}>
           <div className="auth-card__field">
-            <label htmlFor="name">Full Name</label>
-            <Input id="name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} required />
+            <label htmlFor="fullName">Full Name</label>
+            <Input id="fullName" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
           </div>
           <div className="auth-card__field">
             <label htmlFor="email">Email</label>
             <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+          <div className="auth-card__field">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <Input id="phoneNumber" placeholder="0123456789" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
           </div>
           <div className="auth-card__field">
             <label htmlFor="password">Password</label>

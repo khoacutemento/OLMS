@@ -8,7 +8,7 @@ import "@/styles/auth.scss";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,9 +29,10 @@ const ChangePassword = () => {
 
     setLoading(true);
     try {
-      await authApi.changePassword({ currentPassword, newPassword });
+      await authApi.changePassword({ oldPassword, newPassword });
       toast.success("Password changed successfully!");
       navigate("/profile");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to change password.");
     } finally {
@@ -51,8 +52,8 @@ const ChangePassword = () => {
 
         <form className="auth-card__form" onSubmit={handleSubmit}>
           <div className="auth-card__field">
-            <label htmlFor="currentPassword">Current Password</label>
-            <Input id="currentPassword" type="password" placeholder="••••••••" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+            <label htmlFor="oldPassword">Current Password</label>
+            <Input id="oldPassword" type="password" placeholder="••••••••" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required />
           </div>
           <div className="auth-card__field">
             <label htmlFor="newPassword">New Password</label>

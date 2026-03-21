@@ -9,14 +9,16 @@ import "@/styles/auth.scss";
 
 const Profile = () => {
   const { user, logout, refreshUser } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setName(user.name);
-      setEmail(user.email);
+      setFullName(user.fullName || "");
+      setPhone(user.phone || "");
+      setAddress(user.address || "");
     }
   }, [user]);
 
@@ -24,9 +26,10 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await authApi.updateProfile({ name, email });
+      await authApi.updateProfile({ fullName, phone, address });
       await refreshUser();
       toast.success("Profile updated successfully!");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to update profile.");
     } finally {
@@ -44,12 +47,20 @@ const Profile = () => {
 
         <form className="auth-card__form" onSubmit={handleUpdate}>
           <div className="auth-card__field">
-            <label htmlFor="name">Full Name</label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <label htmlFor="email">Email</label>
+            <Input id="email" type="email" value={user?.email || ""} disabled />
           </div>
           <div className="auth-card__field">
-            <label htmlFor="email">Email</label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <label htmlFor="fullName">Full Name</label>
+            <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          </div>
+          <div className="auth-card__field">
+            <label htmlFor="phone">Phone</label>
+            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="auth-card__field">
+            <label htmlFor="address">Address</label>
+            <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Saving…" : "Save changes"}
@@ -60,6 +71,11 @@ const Profile = () => {
           <Link to="/change-password">
             <Button variant="outline" className="w-full">Change Password</Button>
           </Link>
+          {user?.role === "Admin" && (
+            <Link to="/admin">
+              <Button variant="outline" className="w-full">Admin Dashboard</Button>
+            </Link>
+          )}
           <Button variant="destructive" className="w-full" onClick={logout}>
             Sign out
           </Button>
